@@ -22,7 +22,9 @@ async fn main() -> std::io::Result<()> {
             // サービス(ルーティング)を設定する
             .service(
                 web::scope("/basic_sample")
-                    .service(handlers::enter))
+                    .service(handlers::enter)
+                    .service(handlers::answer)
+            )
 
     }).bind("127.0.0.1:8080")?.run().await
 }
