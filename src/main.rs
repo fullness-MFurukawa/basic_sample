@@ -6,7 +6,7 @@ use basic_sample::handlers;
 //    main関数
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
-    // 前処理
+    /* 前処理 */
     // ロガーの初期化する
     env_logger::init_from_env(env_logger::Env::new().default_filter_or("info"));
     // Template Engine Teraを生成する
@@ -24,5 +24,5 @@ async fn main() -> std::io::Result<()> {
                 web::scope("/basic_sample")
                     .service(handlers::enter))
 
-    }).bind("127.0.0.1:8080")?.workers(2).run().await
+    }).bind("127.0.0.1:8080")?.run().await
 }
