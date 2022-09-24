@@ -1,6 +1,6 @@
 use std::ops::Deref;
 use actix_web::{error, get , post , HttpResponse, Responder, web};
-use log::debug;
+use log::info;
 use tera::Tera;
 use crate::form::CalcForm;
 
@@ -19,13 +19,13 @@ pub async fn enter(tera: web::Data<Tera>) -> impl Responder {
 #[post("/calc")]
 pub async fn answer(form: web::Form<CalcForm> ,
                          tera: web::Data<Tera>) -> impl Responder {
-    debug!("入力値 {:?}",form);
+    info!("入力値 {:?}",form);
     // 計算処理と結果の取得
     let result = match calc(form.deref()){
         Ok(result) => result ,
         Err(error)  => error.to_string()
     };
-    debug!("実行結果 = {}", result);
+    info!("実行結果 = {}", result);
     // Contextに計算結果を格納
     let mut context = tera::Context::new();
     context.insert("result" , &result);
