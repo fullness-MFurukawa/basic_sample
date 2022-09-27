@@ -1,4 +1,3 @@
-use std::ops::Deref;
 use actix_web::{error, get , post , HttpResponse, Responder, web};
 use log::info;
 use tera::Tera;
@@ -21,7 +20,7 @@ pub async fn answer(form: web::Form<CalcForm> ,
                          tera: web::Data<Tera>) -> impl Responder {
     info!("入力値 {:?}",form);
     // 計算処理と結果の取得
-    let result = match calc(form.deref()){
+    let result = match calc(&form){
         Ok(result) => result ,
         Err(error)  => error.to_string()
     };

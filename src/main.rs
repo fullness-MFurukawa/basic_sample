@@ -2,7 +2,6 @@ use actix_web::{App, HttpServer, middleware, web};
 use tera::Tera;
 use basic_sample::handlers;
 
-
 //    main関数
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
@@ -21,10 +20,10 @@ async fn main() -> std::io::Result<()> {
             .app_data(web::Data::new(tera.clone())) // Template Engineの登録
             // サービス(ルーティング)を設定する
             .service(
-                web::scope("/basic_sample")
+                web::scope("/basic_sample")  // 共通なパスを設定
+                    // リクエストハンドラを設定
                     .service(handlers::enter)
                     .service(handlers::answer)
             )
-
     }).bind("127.0.0.1:8080")?.run().await
 }
