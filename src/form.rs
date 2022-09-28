@@ -1,6 +1,6 @@
-use serde::Deserialize;
+use serde::{Deserialize , Serialize};
 //入力値を保持する構造体
-#[derive(Deserialize , Debug)]
+#[derive(Deserialize , Serialize , Debug)]
 pub struct CalcForm{
     pub value1: i64, // 値1
     pub value2: i64, // 値2

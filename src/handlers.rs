@@ -1,6 +1,6 @@
 use actix_web::{error, HttpResponse, Responder, web};
-//use actix_web::{ get , post };
 use log::info;
+//use actix_web::{ get , post }; use log::info;
 use tera::Tera;
 use crate::form::CalcForm;
 
@@ -48,4 +48,69 @@ fn calc(form: &CalcForm) -> anyhow::Result<String> {
         _ => return Err(anyhow::Error::msg("Parameter Error."))
     };
     Ok(result.to_string())
+}
+
+#[cfg(test)]
+mod tests{
+    use super::*;
+    use actix_web::{App, web, test};
+    use actix_http::Request;
+    use actix_web::dev::ServiceResponse;
+    use actix_web::http::StatusCode;
+    use actix_web::web::resource;
+
+    // テスト用Serviceの準備
+    async fn init_test_service() -> impl actix_web::dev::Service<Request, Response = ServiceResponse, Error = actix_web::Error> {
+        let tera = Tera::new(concat!(env!("CARGO_MANIFEST_DIR"), "/views/**/*")).unwrap();
+        let test_service = test::init_service(
+            App::new()
+            .app_data(web::Data::new(tera.clone()))
+            .service(
+                web::scope("/basic_sample")
+                .service(
+                    resource("/calc")
+                        .route(web::get().to(enter))
+                    .route(web::post().to(answer)))
+                )
+        ).await;
+        test_service
+    }
+    // GETリクエストのテスト enter()関数
+    #[actix_web::test]
+    async fn test_enter() -> () {
+        // テスト用Serviceの取得する
+        let test_service = init_test_service().await;
+
+        // GETリクエストを生成する
+        let enter_request = test::TestRequest::get().uri("/basic_sample/calc").to_request();
+        // リクエストハンドラenter()を実行する
+        let response = test::call_service(&test_service, enter_request).await;
+        // ヘッダーを出力する
+        println!("{:?}" , response.headers());
+        // ボディを出力する
+        println!("{:?}" , response.response().body());
+        // ステータスコードを評価する
+        assert_eq!(response.status() , StatusCode::OK);
+    }
+
+    // POSTリクエストをテスト answer関数
+    #[actix_web::test]
+    async fn test_answer() -> () {
+        // テスト用Serviceの取得する
+        let test_service = init_test_service().await;
+        // 入力データを準備する
+        let calc_form = CalcForm{value1:100,value2:200,opt:1};
+        // CalcFormを格納したPostリクエストを生成する
+        let answer_request = test::TestRequest::post().uri("/basic_sample/calc").set_form(&calc_form).to_request();
+        // リクエストハンドラanswer()を実行する
+        let response = test::call_service(&test_service , answer_request).await;
+        // ヘッダーを出力する
+        println!("{:?}" , response.headers());
+        // ボディを出力する
+        println!("{:?}" , response.response().body());
+        // ステータスコードを評価する
+        assert_eq!(response.status() , StatusCode::OK);
+    }
+
+
 }
