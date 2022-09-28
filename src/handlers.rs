@@ -49,18 +49,17 @@ fn calc(form: &CalcForm) -> anyhow::Result<String> {
     };
     Ok(result.to_string())
 }
-
+// リクエストハンドラのテスト
 #[cfg(test)]
 mod tests{
     use super::*;
-    use actix_web::{App, web, test};
-    use actix_http::Request;
+    use actix_web::{App, web, test , Error};
     use actix_web::dev::ServiceResponse;
     use actix_web::http::StatusCode;
     use actix_web::web::resource;
 
     // テスト用Serviceの準備
-    async fn init_test_service() -> impl actix_web::dev::Service<Request, Response = ServiceResponse, Error = actix_web::Error> {
+    async fn init_test_service() -> impl actix_web::dev::Service<actix_http::Request, Response = ServiceResponse, Error = Error> {
         let tera = Tera::new(concat!(env!("CARGO_MANIFEST_DIR"), "/views/**/*")).unwrap();
         let test_service = test::init_service(
             App::new()
