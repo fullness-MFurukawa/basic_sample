@@ -1,10 +1,11 @@
-use actix_web::{error, get , post , HttpResponse, Responder, web};
+use actix_web::{error, HttpResponse, Responder, web};
+//use actix_web::{ get , post };
 use log::info;
 use tera::Tera;
 use crate::form::CalcForm;
 
 // 入力画面要求
-#[get("/calc")]
+//#[get("/calc")]
 pub async fn enter(tera: web::Data<Tera>) -> impl Responder {
     // HTMLの取得
     let resp_body = tera.render(
@@ -15,7 +16,7 @@ pub async fn enter(tera: web::Data<Tera>) -> impl Responder {
     HttpResponse::Ok().content_type(mime::TEXT_HTML).body(resp_body)
 }
 // 計算処理要求
-#[post("/calc")]
+//#[post("/calc")]
 pub async fn answer(form: web::Form<CalcForm> ,
                          tera: web::Data<Tera>) -> impl Responder {
     info!("入力値 {:?}",form);
